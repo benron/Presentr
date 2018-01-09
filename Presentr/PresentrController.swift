@@ -435,7 +435,11 @@ extension PresentrController {
     @objc func keyboardWasShown(notification: Notification) {
         if let keyboardFrame = notification.keyboardEndFrame() {
             let presentedFrame = frameOfPresentedViewInContainerView
-            let translatedFrame = keyboardTranslationType.getTranslationFrame(keyboardFrame: keyboardFrame, presentedFrame: presentedFrame)
+            var safeAreaInsets: UIEdgeInsets?
+            if #available(iOS 11.0, *) {
+              safeAreaInsets = presentingViewController.view.safeAreaInsets
+            }
+            let translatedFrame = keyboardTranslationType.getTranslationFrame(keyboardFrame: keyboardFrame, presentedFrame: presentedFrame, safeAreaInsetTop: safeAreaInsets?.top)
             if translatedFrame != presentedFrame {
                 UIView.animate(withDuration: notification.keyboardAnimationDuration() ?? 0.5, animations: {
                     self.presentedView?.frame = translatedFrame
